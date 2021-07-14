@@ -2,6 +2,7 @@ var testBox;
 
 function startGame() {
     gameArea.start();
+    drawImage();
     testBox = new Rect_Component(30, 30, "red", 140, 120);
     setUpEvents();
 }
