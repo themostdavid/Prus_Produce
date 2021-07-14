@@ -14,6 +14,11 @@ var gameArea = {
         this.canvas.height = 560;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+    },
+
+    clear : function()
+    {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 };
 
@@ -29,9 +34,22 @@ function Rect_Component(width, height, color, x, y) {
 
 function generateSquare()
 {
-    var localBox = new Rect_Component(30, 30, "blue",
+    gameArea.clear();
+
+    //keep old red boy
+    new Rect_Component(30, 30, "red", 140, 120);
+    new Rect_Component(30, 30, "#" + (h = randomColor()),
         Math.ceil(Math.random() * 1000),
         Math.ceil(Math.random() * 500));
+    console.log(h);
+}
+
+function randomColor()
+{
+    var red = Math.ceil(Math.random()*255);
+    var green = Math.ceil(Math.random()*255);
+    var blue = Math.ceil(Math.random()*255);
+    return ((red << 16) + (green << 8) + blue).toString(16);
 }
 
 //events using jquery
