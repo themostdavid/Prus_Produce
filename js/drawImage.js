@@ -3,6 +3,7 @@ function drawImage()
 {
     let testImg = document.createElement("img");
     testImg.src = "images/corn.jpg";
+    testImg.classList.add("bigImage");
     document.body.appendChild(testImg);
     //now try to draw on canvas
     const ctx = gameArea.canvas.getContext("2d");
