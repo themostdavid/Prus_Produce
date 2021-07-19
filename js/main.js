@@ -2,7 +2,7 @@ var testBox;
 
 function startGame() {
     gameArea.start();
-    drawImage();
+    //drawImage();
     testBox = new Rect_Component(30, 30, "red", 140, 120);
     setUpEvents();
 }
@@ -24,11 +24,12 @@ var gameArea = {
 };
 
 function Rect_Component(width, height, color, x, y) {
+    console.log("Rect_Component created.\n");
     this.width = width;
     this.height = height;
     this.x = x;
     this.y = y;
-    ctx = gameArea.context;
+    let ctx = gameArea.context;
     ctx.fillStyle = color;
     ctx.fillRect(this.x, this.y, this.width, this.height);
 }
@@ -63,7 +64,7 @@ function setUpEvents()
         {
             //Left click
             case 1:
-                generateSquare();
+                rotateCorn();
                 break;
             default:
                 break;
