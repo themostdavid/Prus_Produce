@@ -1,6 +1,6 @@
 canvas
 {
-    border: 1px solid #d3d3d3;
+    border: 5px solid #d3d3d3;
     background-color: #f1f1f1;
     padding-left: 0;
     padding-right: 0;
@@ -12,6 +12,17 @@ canvas
 body
 {
     background: rgba(110, 165, 189, 0.5);
+}
+
+.bigImage
+{
+    margin-top: 20px;
+}
+
+#Desc
+{
+    text-align: center;
+    display: block;
 }
 
 #squareGen
