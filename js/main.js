@@ -1,9 +1,16 @@
-var testBox;
+var mainBox;
+var secondaryBox;
+var boxes = [];
 
 function startGame() {
     gameArea.start();
-    //drawImage();
-    testBox = new Rect_Component(30, 30, "red", 140, 120);
+    //drawImage("images/corn.jpg");
+    mainBox = new Rect_Component(30, 30, "red", 140, 120);
+    boxes.push(mainBox);
+    secondaryBox = new Rect_Component(450, 40, "blue", 300, 250);
+    boxes.push(secondaryBox);
+    boxes.push(new Rect_Component(70, 1000, "purple",
+        gameArea.canvas.width/2 - 10, gameArea.canvas.height/2 - 10));
     setUpEvents();
 }
 
@@ -15,6 +22,9 @@ var gameArea = {
         this.canvas.height = 560;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        this.FRAMERATE = 120;
+        this.frameNo = 0;
+        this.interval = setInterval(updateGameArea, (1/this.FRAMERATE)*1000);
     },
 
     clear : function()
@@ -23,15 +33,68 @@ var gameArea = {
     }
 };
 
+// Runs every frame
+function updateGameArea()
+{
+    //console.log("updateGameArea()");
+    gameArea.clear();
+    gameArea.frameNo += 1;
+    for (let i = 0; i < boxes.length; ++i)
+    {
+        if (i !== 0)
+        {
+            if (Math.floor((gameArea.frameNo/gameArea.FRAMERATE) % 2))
+            {
+                boxes[i].width -= boxes[i].width * .01;
+                boxes[i].length -= boxes[i].length * .01;
+            }
+            else
+            {
+                boxes[i].width += boxes[i].width * .01;
+                boxes[i].length += boxes[i].length * .01;
+            }
+        }
+        boxes[i].angle += degToRad(1);
+        boxes[i].hasRotated = true;
+        boxes[i].update();
+    }
+}
+
 function Rect_Component(width, height, color, x, y) {
     console.log("Rect_Component created.\n");
+    this.hasRotated = false; // if rotated during latest frame, true
     this.width = width;
     this.height = height;
+    this.angle = 0;
     this.x = x;
     this.y = y;
-    let ctx = gameArea.context;
-    ctx.fillStyle = color;
-    ctx.fillRect(this.x, this.y, this.width, this.height);
+    // rotateFill() method??? with angle argument. it would handle rotating canvas
+    this.update = function()
+    {
+        let ctx = gameArea.context;
+        // Call rotateFill() here??? or just have it here
+        if(this.hasRotated)
+        {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.angle);
+            ctx.fillStyle = color;
+            ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
+            ctx.restore();
+            this.hasRotated = false;
+        }
+        else
+        {
+            ctx.fillStyle = color;
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
+    }
+
+}
+
+function degToRad(degrees)
+{
+    return degrees * (Math.PI / 180);
 }
 
 function generateSquare()
@@ -43,7 +106,6 @@ function generateSquare()
     new Rect_Component(30, 30, "#" + (h = randomColor()),
         Math.ceil(Math.random() * 1000),
         Math.ceil(Math.random() * 500));
-    console.log(h);
 }
 
 function randomColor()
