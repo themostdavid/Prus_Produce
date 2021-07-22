@@ -1,9 +1,11 @@
 var mainBox;
+var secondaryBox;
 
 function startGame() {
     gameArea.start();
     //drawImage("images/corn.jpg");
     mainBox = new Rect_Component(30, 30, "red", 140, 120);
+    secondaryBox = new Rect_Component(120, 40, "blue", 300, 250);
     setUpEvents();
 }
 
@@ -15,9 +17,9 @@ var gameArea = {
         this.canvas.height = 560;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-        this.FRAMERATE = 60;
-        this.frameNo = 0;
-        this.interval = setInterval(updateGameArea, 1/this.FRAMERATE);
+        this.FRAMERATE = 120;
+        this.frameN30 = 0;
+        this.interval = setInterval(updateGameArea, (1/this.FRAMERATE)*1000);
     },
 
     clear : function()
@@ -29,10 +31,17 @@ var gameArea = {
 // Runs every frame
 function updateGameArea()
 {
+    //console.log("updateGameArea()");
     gameArea.clear();
     gameArea.frameNo += 1;
-    mainBox.angle += 1;
+    mainBox.angle += .01;
+    mainBox.hasRotated = true;
+    secondaryBox.angle += .1;
+    secondaryBox.hasRotated = true;
     mainBox.update();
+    secondaryBox.update();
+    mainBox.hasRotated = false;
+    secondaryBox.hasRotated = false;
 }
 
 function Rect_Component(width, height, color, x, y) {
@@ -74,7 +83,6 @@ function generateSquare()
     new Rect_Component(30, 30, "#" + (h = randomColor()),
         Math.ceil(Math.random() * 1000),
         Math.ceil(Math.random() * 500));
-    console.log(h);
 }
 
 function randomColor()
