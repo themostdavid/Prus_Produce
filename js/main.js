@@ -1,9 +1,9 @@
-var testBox;
+var mainBox;
 
 function startGame() {
     gameArea.start();
-    //drawImage();
-    testBox = new Rect_Component(30, 30, "red", 140, 120);
+    //drawImage("images/corn.jpg");
+    mainBox = new Rect_Component(30, 30, "red", 140, 120);
     setUpEvents();
 }
 
@@ -15,6 +15,9 @@ var gameArea = {
         this.canvas.height = 560;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        this.FRAMERATE = 60;
+        this.frameNo = 0;
+        this.interval = setInterval(updateGameArea, 1/this.FRAMERATE);
     },
 
     clear : function()
@@ -23,15 +26,43 @@ var gameArea = {
     }
 };
 
+// Runs every frame
+function updateGameArea()
+{
+    gameArea.clear();
+    gameArea.frameNo += 1;
+    mainBox.angle += 1;
+    mainBox.update();
+}
+
 function Rect_Component(width, height, color, x, y) {
     console.log("Rect_Component created.\n");
+    this.hasRotated = false; // if rotated during latest frame, true
     this.width = width;
     this.height = height;
+    this.angle = 0;
     this.x = x;
     this.y = y;
-    let ctx = gameArea.context;
-    ctx.fillStyle = color;
-    ctx.fillRect(this.x, this.y, this.width, this.height);
+    // rotateFill() method??? with angle argument. it would handle rotating canvas
+    this.update = function()
+    {
+        let ctx = gameArea.context;
+        // Call rotateFill() here??? or just have it here
+        if(this.hasRotated)
+        {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.angle);
+            ctx.fillStyle = color;
+            ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
+            ctx.restore();
+        }
+        else
+        {
+            ctx.fillStyle = color;
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
+    }
 }
 
 function generateSquare()

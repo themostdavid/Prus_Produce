@@ -1,8 +1,8 @@
 // Attempting to place image on html document
-function drawImage()
+function drawImage(sSrc)
 {
     let testImg = document.createElement("img");
-    testImg.src = "images/corn.jpg";
+    testImg.src = sSrc;
     testImg.classList.add("bigImage");
     document.body.appendChild(testImg);
     //now try to draw on canvas
