@@ -19,6 +19,12 @@ body
     margin-top: 20px;
 }
 
+#Desc
+{
+    text-align: center;
+    display: block;
+}
+
 #squareGen
 {
     background: blue;

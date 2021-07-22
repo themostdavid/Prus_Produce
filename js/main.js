@@ -1,11 +1,16 @@
 var mainBox;
 var secondaryBox;
+var boxes = [];
 
 function startGame() {
     gameArea.start();
     //drawImage("images/corn.jpg");
     mainBox = new Rect_Component(30, 30, "red", 140, 120);
-    secondaryBox = new Rect_Component(120, 40, "blue", 300, 250);
+    boxes.push(mainBox);
+    secondaryBox = new Rect_Component(450, 40, "blue", 300, 250);
+    boxes.push(secondaryBox);
+    boxes.push(new Rect_Component(70, 1000, "purple",
+        gameArea.canvas.width/2 - 10, gameArea.canvas.height/2 - 10));
     setUpEvents();
 }
 
@@ -18,7 +23,7 @@ var gameArea = {
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.FRAMERATE = 120;
-        this.frameN30 = 0;
+        this.frameNo = 0;
         this.interval = setInterval(updateGameArea, (1/this.FRAMERATE)*1000);
     },
 
@@ -34,14 +39,25 @@ function updateGameArea()
     //console.log("updateGameArea()");
     gameArea.clear();
     gameArea.frameNo += 1;
-    mainBox.angle += .01;
-    mainBox.hasRotated = true;
-    secondaryBox.angle += .1;
-    secondaryBox.hasRotated = true;
-    mainBox.update();
-    secondaryBox.update();
-    mainBox.hasRotated = false;
-    secondaryBox.hasRotated = false;
+    for (let i = 0; i < boxes.length; ++i)
+    {
+        if (i !== 0)
+        {
+            if (Math.floor((gameArea.frameNo/gameArea.FRAMERATE) % 2))
+            {
+                boxes[i].width -= boxes[i].width * .01;
+                boxes[i].length -= boxes[i].length * .01;
+            }
+            else
+            {
+                boxes[i].width += boxes[i].width * .01;
+                boxes[i].length += boxes[i].length * .01;
+            }
+        }
+        boxes[i].angle += degToRad(1);
+        boxes[i].hasRotated = true;
+        boxes[i].update();
+    }
 }
 
 function Rect_Component(width, height, color, x, y) {
@@ -65,6 +81,7 @@ function Rect_Component(width, height, color, x, y) {
             ctx.fillStyle = color;
             ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
             ctx.restore();
+            this.hasRotated = false;
         }
         else
         {
@@ -72,6 +89,12 @@ function Rect_Component(width, height, color, x, y) {
             ctx.fillRect(this.x, this.y, this.width, this.height);
         }
     }
+
+}
+
+function degToRad(degrees)
+{
+    return degrees * (Math.PI / 180);
 }
 
 function generateSquare()

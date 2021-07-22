@@ -22,15 +22,9 @@ function rotateCorn()
     let cornImg = document.createElement("img");
     cornImg.src = "images/corn.jpg";
     const ctx = c.getContext("2d");
-    gameArea.clear();
+    //gameArea.clear();
     cornImg.onload = function ()
     {
-        new Rect_Component(30, 30, "red", 140, 120);
-        new Rect_Component(c.width/2, 12, "#D2FF05", 0, c.height/2+12);
-        ctx.save();
-        ctx.translate(c.width/2, c.height/2);
-        ctx.drawImage(cornImg, 0, 0,
-            cornImg.width/2, cornImg.height/2);
-        ctx.restore();
+        //boxes.push(cornImg);
     }
 }
