@@ -1,16 +1,11 @@
-var mainBox;
-var secondaryBox;
-var boxes = [];
+let boxes = [];
+const FUNNYGROW = true;
 
 function startGame() {
     gameArea.start();
     //drawImage("images/corn.jpg");
-    mainBox = new Rect_Component(4, 4, "red", 140, 120);
-    boxes.push(mainBox);
-    secondaryBox = new Rect_Component(40, 40, "blue", 300, 250);
-    boxes.push(secondaryBox);
-    boxes.push(new Rect_Component(70, 70, "purple",
-        gameArea.canvas.width/2 - 10, gameArea.canvas.height/2 - 10));
+    boxes.push(new Rect_Component(30, 15, "red", 140, 120, 20));
+    boxes.push(new Rect_Component(40, 20, "purple", 140, 400, 20));
     setUpEvents();
 }
 
@@ -22,10 +17,10 @@ var gameArea = {
         this.canvas.height = 560;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-        this.FRAMERATE = 120;
+        this.FRAMERATE = 60;
         this.frameNo = 0;
         //this.interval = setInterval(updateGameArea, (1/this.FRAMERATE)*1000);
-        this.gravity = .25;
+        this.gravity = 0;
     },
     clear : function()
     {
@@ -41,33 +36,37 @@ function updateGameArea()
     gameArea.frameNo += 1;
     for (let i = 0; i < boxes.length; ++i)
     {
-        if (false)
+        if (FUNNYGROW)
         {
             if (Math.floor((gameArea.frameNo/gameArea.FRAMERATE) % 2))
             {
                 boxes[i].width -= boxes[i].width * .01;
-                boxes[i].length -= boxes[i].length * .01;
+                console.log("Length1: " + boxes[i].height);
+                boxes[i].height -= boxes[i].height * .01;
+                console.log("Length2: " + boxes[i].height);
             }
             else
             {
                 boxes[i].width += boxes[i].width * .01;
-                boxes[i].length += boxes[i].length * .01;
+                console.log("Length1: " + boxes[i].height);
+                boxes[i].height += boxes[i].height * .01;
+                console.log("Length2: " + boxes[i].height);
             }
         }
-        boxes[i].angle += degToRad(1);
-        boxes[i].hasRotated = true;
+        // boxes[i].angle += degToRad(1);
+        // boxes[i].hasRotated = true;
         boxes[i].newPos();
         boxes[i].update();
     }
 }
 
-function Rect_Component(width, height, color, x, y) {
+function Rect_Component(width, height, color, x, y, initXSpeed) {
     console.log("Rect_Component created.\n");
     this.hasRotated = false; // if rotated during latest frame, true
     this.width = width;
     this.height = height;
     this.angle = 0;
-    this.speedX = 5;
+    this.speedX = initXSpeed;
     this.speedY = 0;
     this.x = x;
     this.y = y;
@@ -79,7 +78,7 @@ function Rect_Component(width, height, color, x, y) {
     this.update = function()
     {
         let ctx = gameArea.context;
-        if (this.x >= gameArea.canvas.width)
+        if ((this.x + this.width) >= gameArea.canvas.width)
         {
             this.x = gameArea.canvas.width - this.width;
             this.speedX = -1*(this.speedX*1.01);
@@ -91,7 +90,7 @@ function Rect_Component(width, height, color, x, y) {
         {
             this.x = 0;
             //console.log("SpeedX_LEFTBEFORE=" + this.speedX);
-            this.speedX = -1*(this.speedX*1.01);
+            this.speedX = -1*(this.speedX*1.00);
             if (this.speedX > gameArea.canvas.width-120)
                 this.speedX = gameArea.canvas.width-120;
             console.log("SpeedX_LEFT=" + this.speedX);
@@ -158,7 +157,7 @@ function setUpEvents()
         {
             //Left click
             case 1:
-                timeoutId = setInterval(updateGameArea, 10);
+                timeoutId = setInterval(updateGameArea, (1/gameArea.FRAMERATE)*1000);
                 updateGameArea();
                 //rotateCorn();
                 break;
@@ -169,9 +168,7 @@ function setUpEvents()
     }).on("mouseup", function(e)
     {
         clearInterval(timeoutId);
-    });
-
-    $b_gen.on("contextmenu", function(e)
+    }).on("contextmenu", function(e)
     {
         return false;
     });
