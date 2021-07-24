@@ -5,7 +5,7 @@ var boxes = [];
 function startGame() {
     gameArea.start();
     //drawImage("images/corn.jpg");
-    mainBox = new Rect_Component(30, 30, "red", 140, 120);
+    mainBox = new Rect_Component(4, 4, "red", 140, 120);
     boxes.push(mainBox);
     secondaryBox = new Rect_Component(40, 40, "blue", 300, 250);
     boxes.push(secondaryBox);
@@ -24,7 +24,7 @@ var gameArea = {
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.FRAMERATE = 120;
         this.frameNo = 0;
-        this.interval = setInterval(updateGameArea, (1/this.FRAMERATE)*1000);
+        //this.interval = setInterval(updateGameArea, (1/this.FRAMERATE)*1000);
         this.gravity = .25;
     },
     clear : function()
@@ -79,6 +79,23 @@ function Rect_Component(width, height, color, x, y) {
     this.update = function()
     {
         let ctx = gameArea.context;
+        if (this.x >= gameArea.canvas.width)
+        {
+            this.x = gameArea.canvas.width - this.width;
+            this.speedX = -1*(this.speedX*1.01);
+            if (this.speedX < -1*gameArea.canvas.width+120)
+                this.speedX = -1*gameArea.canvas.width+120;
+            console.log("SpeedX_RIGHT=" + this.speedX);
+        }
+        else if (this.x <= 0)
+        {
+            this.x = 0;
+            //console.log("SpeedX_LEFTBEFORE=" + this.speedX);
+            this.speedX = -1*(this.speedX*1.01);
+            if (this.speedX > gameArea.canvas.width-120)
+                this.speedX = gameArea.canvas.width-120;
+            console.log("SpeedX_LEFT=" + this.speedX);
+        }
         if(this.hasRotated)
         {
             ctx.save();
@@ -93,23 +110,6 @@ function Rect_Component(width, height, color, x, y) {
         {
             ctx.fillStyle = color;
             ctx.fillRect(this.x, this.y, this.width, this.height);
-        }
-        if (this.x >= gameArea.canvas.width)
-        {
-            this.x = gameArea.canvas.width;
-            this.speedX = -1*(this.speedX*1.01);
-            if (this.speedX < -1*gameArea.canvas.width+120)
-                this.speedX = -1*gameArea.canvas.width+120;
-            console.log("SpeedX_RIGHT=" + this.speedX);
-        }
-        else if (this.x <= 0)
-        {
-            this.x = 0;
-            //console.log("SpeedX_LEFTBEFORE=" + this.speedX);
-            this.speedX = -1*(this.speedX*1.01);
-            if (this.speedX > gameArea.canvas.width-120)
-                this.speedX = gameArea.canvas.width-120;
-            console.log("SpeedX_LEFT=" + this.speedX);
         }
         if (this.y >= gameArea.canvas.height)
         {
@@ -158,12 +158,17 @@ function setUpEvents()
         {
             //Left click
             case 1:
-                rotateCorn();
+                timeoutId = setInterval(updateGameArea, 10);
+                updateGameArea();
+                //rotateCorn();
                 break;
             default:
                 break;
         }
 
+    }).on("mouseup", function(e)
+    {
+        clearInterval(timeoutId);
     });
 
     $b_gen.on("contextmenu", function(e)
